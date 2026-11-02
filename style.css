@@ -1,0 +1,1428 @@
+/* ==========================================================================
+   The Impossible Spirit Level — Precision Carpenter & Absurd Physics
+   ========================================================================== */
+
+:root {
+  --bg-dark: #0a0e17;
+  --bg-grid: #131c2e;
+  --blueprint-line: rgba(56, 189, 248, 0.08);
+  --blueprint-line-bold: rgba(56, 189, 248, 0.16);
+
+  --level-yellow-light: #fef08a;
+  --level-yellow: #facc15;
+  --level-yellow-dark: #ca8a04;
+  --level-yellow-shadow: #854d0e;
+
+  --metal-shine: linear-gradient(180deg, #fef9c3 0%, #facc15 15%, #ca8a04 85%, #713f12 100%);
+  --milled-edge: linear-gradient(90deg, #94a3b8 0%, #cbd5e1 50%, #64748b 100%);
+  --rubber-black: #1e293b;
+  --rubber-dark: #0f172a;
+
+  --fluid-color: #84cc16;
+  --fluid-glow: rgba(132, 204, 22, 0.45);
+  --bubble-color: #ffffff;
+  --oled-cyan: #38bdf8;
+  --oled-green: #4ade80;
+  --oled-amber: #fbbf24;
+  --oled-red: #f87171;
+
+  --font-mono: "SF Mono", "Roboto Mono", "Fira Code", Menlo, Monaco, Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  color: #f1f5f9;
+  font-family: var(--font-sans);
+}
+
+/* Background Workshop / Blueprint Grid */
+.workbench-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.grid-layer {
+  position: absolute;
+  inset: 0;
+  background-size: 32px 32px, 160px 160px;
+  background-image: 
+    linear-gradient(to right, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--blueprint-line-bold) 1.5px, transparent 1.5px),
+    linear-gradient(to bottom, var(--blueprint-line-bold) 1.5px, transparent 1.5px);
+  opacity: 0.85;
+}
+
+.vignette-layer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 35%, rgba(5, 8, 14, 0.88) 100%);
+}
+
+/* Overall Stage Layout */
+.stage-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 12px 18px;
+  gap: 12px;
+  transform-origin: center center;
+  transition: transform 0.05s linear;
+}
+
+/* ==========================================================================
+   Header & HUD
+   ========================================================================== */
+
+.hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 12px;
+  padding: 10px 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hud-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.brand-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #f8fafc;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.brand-model {
+  font-size: 11px;
+  color: #94a3b8;
+  letter-spacing: 0.03em;
+}
+
+/* Telemetry OLED Display */
+.telemetry-panel {
+  display: flex;
+  align-items: center;
+}
+
+.oled-screen {
+  background: #020617;
+  border: 2px solid #1e293b;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.9), 0 0 15px rgba(56, 189, 248, 0.15);
+  border-radius: 8px;
+  padding: 6px 14px;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-mono);
+}
+
+.oled-row-top {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 9px;
+  color: #64748b;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.oled-status {
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 800;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.oled-status.near {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.oled-status.critical {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.4);
+  animation: pulse-critical 0.3s infinite alternate;
+}
+
+@keyframes pulse-critical {
+  from { opacity: 0.6; }
+  to { opacity: 1; text-shadow: 0 0 8px #4ade80; }
+}
+
+.oled-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.oled-sign {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--oled-cyan);
+}
+
+.oled-digits {
+  font-size: 24px;
+  font-weight: 900;
+  color: #38bdf8;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+}
+
+.oled-unit {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0284c7;
+}
+
+.oled-row-bottom {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 9px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.oled-subtext span, .oled-record span {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+/* Header Buttons / Actions */
+.hud-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-tool {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 6px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.btn-tool:hover {
+  background: #334155;
+  border-color: #64748b;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-tool:active {
+  transform: translateY(1px);
+  background: #0f172a;
+}
+
+.btn-tool.active {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+/* ==========================================================================
+   Sabotage Alert Banner
+   ========================================================================== */
+
+.sabotage-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(90deg, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.92));
+  border: 2px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: #fff;
+  box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5), 0 0 20px rgba(239, 68, 68, 0.6);
+  animation: slide-in-banner 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  position: relative;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.sabotage-banner.hidden {
+  display: none !important;
+}
+
+@keyframes slide-in-banner {
+  0% { transform: translateY(-30px) scale(0.95); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.banner-icon {
+  font-size: 28px;
+  animation: alarm-shake 0.4s infinite;
+}
+
+@keyframes alarm-shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg); }
+}
+
+.banner-content {
+  flex: 1;
+}
+
+.banner-title {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.banner-desc {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+.banner-seismic-meter {
+  width: 90px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meter-bar {
+  width: 100%;
+  height: 100%;
+  background: #fef08a;
+  animation: pulse-meter 0.2s infinite alternate;
+}
+
+@keyframes pulse-meter {
+  from { width: 40%; background: #fbbf24; }
+  to { width: 100%; background: #ffffff; }
+}
+
+/* ==========================================================================
+   Main Stage & Spirit Level Body
+   ========================================================================== */
+
+.level-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 280px;
+}
+
+.level-assembly {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The Tilting Beam */
+.level-beam {
+  position: relative;
+  width: 100%;
+  height: 105px;
+  display: flex;
+  align-items: stretch;
+  background: var(--metal-shine);
+  border-radius: 12px;
+  border: 2px solid #ca8a04;
+  box-shadow: 
+    0 22px 45px rgba(0, 0, 0, 0.65),
+    inset 0 2px 4px rgba(255, 255, 255, 0.7),
+    inset 0 -3px 6px rgba(113, 63, 18, 0.8);
+  transform-origin: center center;
+  transition: transform 0.06s cubic-bezier(0.1, 0.8, 0.2, 1);
+  cursor: grab;
+  touch-action: none;
+}
+
+.level-beam:active {
+  cursor: grabbing;
+}
+
+/* End Rubber Bumpers */
+.bumper {
+  width: 52px;
+  background: linear-gradient(180deg, #334155 0%, #1e293b 40%, #0f172a 100%);
+  border: 1px solid #475569;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  position: relative;
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.2), inset 0 -2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.bumper-left {
+  border-radius: 10px 0 0 10px;
+}
+
+.bumper-right {
+  border-radius: 0 10px 10px 0;
+}
+
+.hang-hole {
+  width: 18px;
+  height: 26px;
+  border-radius: 9px;
+  background: #020617;
+  border: 2px solid #475569;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+.screw {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+  border: 1px solid #475569;
+  position: relative;
+}
+
+.screw::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 1px;
+  width: 6px;
+  height: 1.5px;
+  background: #334155;
+}
+
+/* Beam Body Center Area */
+.beam-body {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+}
+
+/* Milled Aluminum Rulers Top & Bottom */
+.ruler {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+  border-color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #1e293b;
+  overflow: hidden;
+}
+
+.ruler-top {
+  top: 0;
+  border-bottom: 1px solid #64748b;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.ruler-bottom {
+  bottom: 0;
+  border-top: 1px solid #64748b;
+  box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.ruler-brand {
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+
+.ruler-note {
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+
+/* Hand Grips */
+.hand-grip {
+  width: 90px;
+  height: 48px;
+  border-radius: 24px;
+  background: #0f172a;
+  border: 3px solid #713f12;
+  box-shadow: inset 0 5px 12px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grip-inner {
+  width: 78px;
+  height: 36px;
+  border-radius: 18px;
+  background: #020617;
+  border: 1px solid #334155;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.95);
+}
+
+/* Auxiliary Vials (45° and 90°) */
+.aux-vial-housing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: #0f172a;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 2px solid #854d0e;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.vial-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  color: #facc15;
+}
+
+.aux-vial-tube {
+  width: 44px;
+  height: 20px;
+  border-radius: 10px;
+  background: #020617;
+  border: 1px solid #475569;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.tube-45 {
+  transform: rotate(-45deg);
+}
+
+.aux-fluid {
+  position: absolute;
+  inset: 1px;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #bef264 0%, #84cc16 50%, #4d7c0f 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.aux-bubble {
+  position: absolute;
+  top: 2px;
+  left: 12px;
+  width: 14px;
+  height: 12px;
+  border-radius: 6px;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, rgba(255, 255, 255, 0.8) 40%, rgba(255, 255, 255, 0.2) 80%);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8), inset 0 0 2px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease-out;
+}
+
+/* ==========================================================================
+   PRIMARY CENTER SPIRIT VIAL (THE IMPOSSIBLE TARGET)
+   ========================================================================== */
+
+.main-vial-housing {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.vial-bezel {
+  width: 100%;
+  height: 64px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 3px solid #713f12;
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.95),
+    0 2px 6px rgba(255, 255, 255, 0.35);
+  padding: 4px;
+  position: relative;
+}
+
+.vial-acrylic-case {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.vial-reflection-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 8px 8px 0 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.vial-chamber {
+  position: absolute;
+  inset: 2px;
+  border-radius: 8px;
+  background: radial-gradient(ellipse at center, #a3e635 0%, #84cc16 45%, #4d7c0f 90%, #365314 100%);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+}
+
+.liquid-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(163, 230, 53, 0.6) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Center Hairline Brackets */
+.hairlines-center {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 60px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hairline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #0f172a;
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.hairline-left {
+  left: 4px;
+}
+
+.hairline-right {
+  right: 4px;
+}
+
+.hairline-zero {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  background: rgba(239, 68, 68, 0.7);
+  border-left: 1px dashed rgba(239, 68, 68, 0.9);
+}
+
+.center-target-pip {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 4px #ef4444;
+}
+
+/* Fluid Bubble Canvas */
+.bubble-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.vial-quantum-glitch {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(236, 72, 153, 0.25) 0px, transparent 2px, rgba(14, 165, 233, 0.25) 4px);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 8;
+  mix-blend-mode: overlay;
+  transition: opacity 0.1s ease;
+}
+
+.vial-quantum-glitch.active {
+  opacity: 1;
+}
+
+.vial-caption {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  font-weight: 700;
+  color: #713f12;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Pivot Drag Handles
+   ========================================================================== */
+
+.pivot-drag-handle {
+  position: absolute;
+  top: -24px;
+  width: 46px;
+  height: 28px;
+  border-radius: 6px;
+  background: #1e293b;
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, background 0.15s;
+  animation: pulse-handle 1.6s infinite alternate;
+}
+
+.handle-left {
+  left: 20px;
+}
+
+.handle-right {
+  right: 20px;
+}
+
+@keyframes pulse-handle {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); box-shadow: 0 6px 14px rgba(56, 189, 248, 0.4); }
+}
+
+.pivot-drag-handle:hover {
+  background: #0284c7;
+  color: #fff;
+}
+
+.handle-arrow {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.handle-tag {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================================================
+   Beer Can Actor
+   ========================================================================== */
+
+.beer-can-wrapper {
+  position: absolute;
+  top: -70px;
+  left: 170px;
+  width: 42px;
+  height: 70px;
+  transform-origin: bottom center;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.08s ease-out;
+}
+
+.beer-can-wrapper.hidden {
+  display: none !important;
+}
+
+.beer-can {
+  width: 42px;
+  height: 68px;
+  border-radius: 8px 8px 5px 5px;
+  background: linear-gradient(90deg, #991b1b 0%, #ef4444 40%, #b91c1c 80%, #7f1d1d 100%);
+  border: 1px solid #fecaca;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.beer-tab {
+  position: absolute;
+  top: 1px;
+  width: 14px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 2px;
+  border: 1px solid #475569;
+}
+
+.beer-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  text-align: center;
+}
+
+.beer-star {
+  font-size: 10px;
+  color: #fef08a;
+}
+
+.beer-brand {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.beer-type {
+  font-size: 6px;
+  font-weight: 700;
+  color: #fecaca;
+  letter-spacing: 0.08em;
+}
+
+.beer-foam {
+  position: absolute;
+  top: -8px;
+  left: 6px;
+  width: 30px;
+  height: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.beer-can-wrapper.spilling .beer-foam {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Rogue Housefly Actor
+   ========================================================================== */
+
+.fly-actor {
+  position: absolute;
+  top: -22px;
+  right: 120px;
+  width: 24px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 25;
+  animation: fly-bob 0.15s infinite alternate;
+}
+
+.fly-actor.hidden {
+  display: none !important;
+}
+
+@keyframes fly-bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-3px); }
+}
+
+.fly-body {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 9px;
+  height: 12px;
+  border-radius: 5px;
+  background: #1e1b4b;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.fly-wing {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.wing-left {
+  top: 4px;
+  left: 2px;
+  transform-origin: right center;
+  animation: flap-l 0.08s infinite alternate;
+}
+
+.wing-right {
+  top: 4px;
+  right: 2px;
+  transform-origin: left center;
+  animation: flap-r 0.08s infinite alternate;
+}
+
+@keyframes flap-l {
+  from { transform: rotate(-30deg); }
+  to { transform: rotate(40deg); }
+}
+
+@keyframes flap-r {
+  from { transform: rotate(30deg); }
+  to { transform: rotate(-40deg); }
+}
+
+.fly-speech {
+  position: absolute;
+  top: -18px;
+  left: -20px;
+  background: #fff;
+  color: #020617;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Fulcrum Stand */
+.fulcrum-stand {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.fulcrum-pivot-point {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #94a3b8 0%, #334155 70%, #0f172a 100%);
+  border: 2px solid #64748b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+.fulcrum-base {
+  width: 90px;
+  height: 12px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+  border: 1px solid #64748b;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* ==========================================================================
+   Bottom Precision Control Deck
+   ========================================================================== */
+
+.control-deck {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  border-radius: 12px;
+  padding: 12px 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.deck-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cluster-fine {
+  flex: 0 0 auto;
+}
+
+.cluster-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.08em;
+}
+
+.button-strip {
+  display: flex;
+  gap: 4px;
+}
+
+.step-btn {
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.step-btn:hover {
+  background: #334155;
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.step-btn:active {
+  transform: translateY(1px);
+  background: #0f172a;
+}
+
+.step-btn.micro {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Vernier Center Cluster */
+.cluster-vernier {
+  flex: 1;
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vernier-display-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vernier-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.06em;
+}
+
+.vernier-mode {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.vernier-mode.steady {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.15);
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.vernier-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-hold-breath {
+  flex: 0 0 auto;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: #e2e8f0;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.12s ease;
+}
+
+.btn-hold-breath:hover {
+  background: #334155;
+}
+
+.btn-hold-breath.holding {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+
+.thumbwheel-container {
+  flex: 1;
+  position: relative;
+  height: 38px;
+  background: #020617;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+}
+
+.wheel-ribs {
+  position: absolute;
+  inset: 0;
+  background-size: 12px 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 6px, rgba(0, 0, 0, 0.5) 7px);
+  pointer-events: none;
+}
+
+.wheel-hairline {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #ef4444;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 0 0 4px #ef4444;
+  z-index: 2;
+}
+
+#angle-slider {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: ew-resize;
+  z-index: 3;
+}
+
+.btn-snap-zero {
+  flex: 0 0 auto;
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+  color: #fff;
+  border: 1px solid #38bdf8;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+}
+
+.btn-snap-zero:hover {
+  background: #0ea5e9;
+  transform: translateY(-1px);
+}
+
+.btn-snap-zero:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================================================
+   Stats Bar Footer
+   ========================================================================== */
+
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.stat-badge {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.stat-val {
+  color: #f1f5f9;
+  font-weight: 800;
+}
+
+.stat-val.highlight {
+  color: #f87171;
+}
+
+.shortcut-guide {
+  color: #94a3b8;
+  font-size: 9.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shortcuts {
+  color: #cbd5e1;
+}
+
+/* ==========================================================================
+   Slap Overlay Animation
+   ========================================================================== */
+
+.slap-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.slap-overlay.hidden {
+  display: none !important;
+}
+
+.slap-hand {
+  font-size: 72px;
+  position: absolute;
+  animation: hand-thwack 0.25s ease-out forwards;
+}
+
+.hand-1 {
+  top: 35%;
+  left: 40%;
+}
+
+.hand-2 {
+  top: 45%;
+  right: 40%;
+  animation-delay: 0.15s;
+}
+
+@keyframes hand-thwack {
+  0% { transform: scale(3) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1) rotate(10deg); opacity: 1; }
+  100% { transform: scale(0.9) rotate(0); opacity: 0; }
+}
+
+.slap-quote {
+  background: #020617;
+  border: 2px solid #facc15;
+  color: #facc15;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(250, 204, 21, 0.4);
+  animation: quote-pop 0.6s ease-out forwards;
+}
+
+@keyframes quote-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  40% { transform: scale(1.1); opacity: 1; }
+  80% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
+
+/* ==========================================================================
+   Sabotage Screen Shakes
+   ========================================================================== */
+
+body.shake-truck #stage-wrapper {
+  animation: shake-truck-anim 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shake-truck-anim {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate3d(-6px, 4px, 0); }
+  20%, 40%, 60%, 80% { transform: translate3d(6px, -4px, 0); }
+}
+
+body.shake-quake #stage-wrapper {
+  animation: shake-quake-anim 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shake-quake-anim {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  15%, 45%, 75% { transform: translate3d(8px, 6px, 0) rotate(0.4deg); }
+  30%, 60%, 90% { transform: translate3d(-8px, -6px, 0) rotate(-0.4deg); }
+}
+
+body.shake-quantum #stage-wrapper {
+  animation: shake-quantum-anim 0.5s ease both;
+  filter: hue-rotate(90deg) contrast(140%);
+}
+
+@keyframes shake-quantum-anim {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.03) skewX(2deg); }
+  75% { transform: scale(0.98) skewX(-2deg); }
+}
+
+/* Reality Inverted Mode */
+body.reality-mode .workbench-bg {
+  transform: rotate(var(--reality-angle, 0deg));
+}
+
+body.reality-mode .hud-header,
+body.reality-mode .control-deck,
+body.reality-mode .stats-bar {
+  transform: rotate(var(--reality-angle, 0deg));
+  transition: transform 0.06s linear;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .hud-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  
+  .telemetry-panel {
+    justify-content: center;
+  }
+
+  .main-vial-housing {
+    flex: 0 0 240px;
+  }
+
+  .hand-grip {
+    display: none;
+  }
+
+  .control-deck {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 14px;
+  }
+
+  .button-strip {
+    justify-content: center;
+  }
+
+  .stats-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .shortcut-guide {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .main-vial-housing {
+    flex: 0 0 180px;
+  }
+
+  .aux-vial-housing {
+    display: none;
+  }
+
+  .bumper {
+    width: 36px;
+  }
+
+  .oled-screen {
+    min-width: 200px;
+  }
+
+  .oled-digits {
+    font-size: 20px;
+  }
+}

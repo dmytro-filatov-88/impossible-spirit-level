@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>The Impossible Spirit Level 📐🫧 | Precision Carpenter Physics & Sabotage Toy</title>
+  <meta name="description" content="A hyper-precise carpenter's spirit level with fluid physics, except it is mathematically impossible to center the green bubble. Getting within 0.1mm triggers micro-earthquakes, gravel trucks, and quantum paradoxes.">
+
+  <!-- Custom Inline SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111827'/%3E%3Crect x='6' y='22' width='52' height='20' rx='4' fill='%23eab308' stroke='%23ca8a04' stroke-width='2'/%3E%3Crect x='20' y='26' width='24' height='12' rx='6' fill='%2384cc16' stroke='%234d7c0f' stroke-width='1.5'/%3E%3Cellipse cx='30' cy='32' rx='5' ry='4' fill='%23ffffff' opacity='0.9'/%3E%3Cline x1='28' y1='26' x2='28' y2='38' stroke='%230f172a' stroke-width='1.5' stroke-dasharray='1 1'/%3E%3Cline x1='36' y1='26' x2='36' y2='38' stroke='%230f172a' stroke-width='1.5' stroke-dasharray='1 1'/%3E%3Ccircle cx='10' cy='32' r='2' fill='%23475569'/%3E%3Ccircle cx='54' cy='32' r='2' fill='%23475569'/%3E%3C/svg%3E">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-workshop">
+  <!-- Blueprint / Workbench Background Grid -->
+  <div class="workbench-bg" id="workbench-bg" aria-hidden="true">
+    <div class="grid-layer"></div>
+    <div class="vignette-layer"></div>
+  </div>
+
+  <!-- Screen Shake Container for Sabotages -->
+  <div id="stage-wrapper" class="stage-wrapper">
+
+    <!-- Top HUD Navigation -->
+    <header class="hud-header">
+      <div class="hud-brand">
+        <div class="hud-badge">INDUSTRIAL GRADE ISO-9001</div>
+        <div class="brand-title-wrap">
+          <h1 class="brand-name">ACME ULTRA-CALIBRE 9000™</h1>
+          <span class="brand-model">Zero-Tolerance Hydrostatic Spirit Level • 0.000001° Resolution</span>
+        </div>
+      </div>
+
+      <!-- Center Digital OLED Telemetry -->
+      <div class="telemetry-panel">
+        <div class="oled-screen" id="oled-screen">
+          <div class="oled-row-top">
+            <span class="oled-label">SURFACE INCLINATION:</span>
+            <span class="oled-status" id="tolerance-badge">UNSTABLE</span>
+          </div>
+          <div class="oled-display">
+            <span class="oled-sign" id="angle-sign">+</span>
+            <span class="oled-digits" id="angle-digits">0.428571</span>
+            <span class="oled-unit">DEG°</span>
+          </div>
+          <div class="oled-row-bottom">
+            <span class="oled-subtext">DELTA TO ZERO: <span id="delta-val">0.428571°</span></span>
+            <span class="oled-record">BEST: <span id="best-val">999.000°</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUD Controls / Toggles -->
+      <div class="hud-actions">
+        <button id="btn-sound" class="btn-tool active" title="Toggle Web Audio [M]">
+          <span class="btn-icon">🔊</span>
+          <span class="btn-text">AUDIO ON</span>
+        </button>
+        <button id="btn-autolevel" class="btn-tool" title="Auto-Calibrate Servo [A]">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">AUTO-LEVEL</span>
+        </button>
+        <button id="btn-slap" class="btn-tool" title="Slap Level Twice: 'That ain't going nowhere' [S]">
+          <span class="btn-icon">👋</span>
+          <span class="btn-text">SLAP TWICE</span>
+        </button>
+        <button id="btn-beer" class="btn-tool" title="Rest Cold Beer Can [B]">
+          <span class="btn-icon">🍺</span>
+          <span class="btn-text">BEER REST</span>
+        </button>
+        <button id="btn-reality" class="btn-tool" title="Level Reality Mode [R]">
+          <span class="btn-icon">🌀</span>
+          <span class="btn-text">LEVEL REALITY</span>
+        </button>
+        <button id="btn-gyro" class="btn-tool" title="Device Gyroscope [G]">
+          <span class="btn-icon">📱</span>
+          <span class="btn-text">GYRO</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sabotage Alert Banner -->
+    <div id="sabotage-banner" class="sabotage-banner hidden" role="alert">
+      <div class="banner-icon" id="sabotage-icon">🚨</div>
+      <div class="banner-content">
+        <div class="banner-title" id="sabotage-title">CATASTROPHIC SABOTAGE!</div>
+        <div class="banner-desc" id="sabotage-desc">A heavy 18-wheeler rumbled by on Interstate 95.</div>
+      </div>
+      <div class="banner-seismic-meter">
+        <div class="meter-bar" id="sabotage-meter"></div>
+      </div>
+    </div>
+
+    <!-- Main Leveling Stage Area -->
+    <main class="level-stage" id="level-stage">
+
+      <!-- Interactive Level Beam Assembly -->
+      <div class="level-assembly" id="level-assembly">
+
+        <!-- Physical Spirit Level Tool Body -->
+        <div class="level-beam" id="level-beam">
+
+          <!-- Left Shock Bumper -->
+          <div class="bumper bumper-left">
+            <div class="hang-hole"></div>
+            <div class="screw screw-1"></div>
+            <div class="screw screw-2"></div>
+          </div>
+
+          <!-- Beam Surface / Milled Aluminum Frame -->
+          <div class="beam-body">
+            <!-- Imperial Ruler Markings (Top) -->
+            <div class="ruler ruler-top">
+              <span class="ruler-brand">MADE IN QUANTUM LABS • DIE-CAST MAGNESIUM</span>
+              <div class="ruler-ticks" id="ticks-top"></div>
+            </div>
+
+            <!-- Hand Grip Cutout Left -->
+            <div class="hand-grip grip-left">
+              <div class="grip-inner">
+                <span class="grip-texture"></span>
+              </div>
+            </div>
+
+            <!-- Auxiliary 45-Degree Angle Vial -->
+            <div class="aux-vial-housing vial-45-housing" title="45° Mitre Vial">
+              <div class="vial-label">45°</div>
+              <div class="aux-vial-tube tube-45">
+                <div class="aux-fluid">
+                  <div class="aux-bubble" id="bubble-45"></div>
+                </div>
+                <div class="vial-lines"></div>
+              </div>
+            </div>
+
+            <!-- PRIMARY CENTER SPIRIT VIAL (THE IMPOSSIBLE TARGET) -->
+            <div class="main-vial-housing" id="main-vial-housing" title="High-Precision Fluorescent Barrel Vial">
+              <div class="vial-bezel">
+                <div class="vial-acrylic-case">
+                  <div class="vial-reflection-sheen"></div>
+                  
+                  <!-- The Liquid Tube -->
+                  <div class="vial-chamber" id="vial-chamber">
+                    <div class="liquid-glow"></div>
+                    
+                    <!-- Center Hairline Target Lines -->
+                    <div class="hairlines-center">
+                      <div class="hairline hairline-left"></div>
+                      <div class="hairline hairline-zero"></div>
+                      <div class="hairline hairline-right"></div>
+                      <span class="center-target-pip"></span>
+                    </div>
+
+                    <!-- The Dynamic Physical Bubble Canvas -->
+                    <canvas id="bubble-canvas" class="bubble-canvas"></canvas>
+
+                    <!-- Quantum Wave / Glitch overlay for sabotages -->
+                    <div class="vial-quantum-glitch" id="vial-glitch"></div>
+                  </div>
+
+                  <div class="vial-reflection-bottom"></div>
+                </div>
+              </div>
+              <div class="vial-caption">CALIBRATED FLUOROCARBON FLUID • DO NOT TAP</div>
+            </div>
+
+            <!-- Auxiliary 90-Degree Plumb Vial -->
+            <div class="aux-vial-housing vial-90-housing" title="90° Plumb Vial">
+              <div class="vial-label">90°</div>
+              <div class="aux-vial-tube tube-90">
+                <div class="aux-fluid">
+                  <div class="aux-bubble" id="bubble-90"></div>
+                </div>
+                <div class="vial-lines"></div>
+              </div>
+            </div>
+
+            <!-- Hand Grip Cutout Right -->
+            <div class="hand-grip grip-right">
+              <div class="grip-inner">
+                <span class="grip-texture"></span>
+              </div>
+            </div>
+
+            <!-- Metric Ruler Markings (Bottom) -->
+            <div class="ruler ruler-bottom">
+              <div class="ruler-ticks" id="ticks-bottom"></div>
+              <span class="ruler-note">ZERO-TOLERANCE SPECIFICATION • SERIAL #00420-FAIL</span>
+            </div>
+          </div>
+
+          <!-- Right Shock Bumper -->
+          <div class="bumper bumper-right">
+            <div class="hang-hole"></div>
+            <div class="screw screw-1"></div>
+            <div class="screw screw-2"></div>
+          </div>
+
+          <!-- Drag Handles & Touch Targets on Ends -->
+          <div class="pivot-drag-handle handle-left" id="handle-left" title="Click & drag to tilt left side">
+            <div class="handle-arrow">▲</div>
+            <span class="handle-tag">DRAG</span>
+          </div>
+          <div class="pivot-drag-handle handle-right" id="handle-right" title="Click & drag to tilt right side">
+            <div class="handle-arrow">▲</div>
+            <span class="handle-tag">DRAG</span>
+          </div>
+
+          <!-- Cold Beer Can Item (Toggled on top of level) -->
+          <div class="beer-can-wrapper hidden" id="beer-can" title="Contractor's Crisp Lager">
+            <div class="beer-foam" id="beer-foam"></div>
+            <div class="beer-can">
+              <div class="beer-tab"></div>
+              <div class="beer-label">
+                <span class="beer-star">⭐</span>
+                <span class="beer-brand">BUZZ-CUT</span>
+                <span class="beer-type">COLD LAGER</span>
+              </div>
+            </div>
+            <div class="beer-condensation"></div>
+          </div>
+
+          <!-- Rogue Housefly Actor (Appears during Fly Sabotage) -->
+          <div class="fly-actor hidden" id="fly-actor" title="Click to swat the pest!">
+            <div class="fly-wing wing-left"></div>
+            <div class="fly-body"></div>
+            <div class="fly-wing wing-right"></div>
+            <div class="fly-speech">bzzzz... +0.004°</div>
+          </div>
+
+        </div> <!-- /level-beam -->
+
+        <!-- Virtual Level Stand / Tripod Fulcrum -->
+        <div class="fulcrum-stand">
+          <div class="fulcrum-pivot-point"></div>
+          <div class="fulcrum-base"></div>
+        </div>
+
+      </div> <!-- /level-assembly -->
+
+    </main>
+
+    <!-- Bottom Precision Control Deck -->
+    <footer class="control-deck">
+      <div class="deck-cluster cluster-fine">
+        <div class="cluster-label">COARSE ADJUST</div>
+        <div class="button-strip">
+          <button class="step-btn" data-step="-5.0" title="Tilt -5°">« -5°</button>
+          <button class="step-btn" data-step="-1.0" title="Tilt -1°">‹ -1°</button>
+          <button class="step-btn" data-step="-0.1" title="Tilt -0.1°">-0.1°</button>
+          <button class="step-btn micro" data-step="-0.01" title="Tilt -0.01°">-0.01°</button>
+          <button class="step-btn micro" data-step="-0.001" title="Micro-Step -0.001°">-0.001°</button>
+        </div>
+      </div>
+
+      <!-- Vernier Rotary Micrometer Wheel / Slider -->
+      <div class="deck-cluster cluster-vernier">
+        <div class="vernier-display-row">
+          <span class="vernier-title">MICROMETER VERNIER THUMBWHEEL</span>
+          <span class="vernier-mode" id="breath-indicator">NORMAL HAND TREMOR (ACTIVE)</span>
+        </div>
+        <div class="vernier-controls">
+          <button id="btn-breath" class="btn-hold-breath" title="Hold your breath to reduce physical hand tremors [Space]">
+            <span class="breath-icon">🫁</span>
+            <span class="breath-txt">HOLD BREATH</span>
+          </button>
+          <div class="thumbwheel-container" id="thumbwheel-track">
+            <div class="wheel-ribs" id="wheel-ribs"></div>
+            <div class="wheel-hairline"></div>
+            <input type="range" id="angle-slider" min="-15" max="15" step="0.0001" value="0.4285" aria-label="Fine tilt angle slider">
+          </div>
+          <button id="btn-zero-snap" class="btn-snap-zero" title="Attempt instant dead-center zero">
+            🎯 SNAP ZERO
+          </button>
+        </div>
+      </div>
+
+      <div class="deck-cluster cluster-fine">
+        <div class="cluster-label">COARSE ADJUST</div>
+        <div class="button-strip">
+          <button class="step-btn micro" data-step="0.001" title="Micro-Step +0.001°">+0.001°</button>
+          <button class="step-btn micro" data-step="0.01" title="Tilt +0.01°">+0.01°</button>
+          <button class="step-btn" data-step="0.1" title="Tilt +0.1°">+0.1°</button>
+          <button class="step-btn" data-step="1.0" title="Tilt +1°">+1° ›</button>
+          <button class="step-btn" data-step="5.0" title="Tilt +5°">+5° »</button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bottom Status Stats Bar -->
+    <aside class="stats-bar">
+      <div class="stat-item" title="How close you've ever gotten before disaster">
+        <span class="stat-badge">CLOSEST CALL:</span>
+        <span class="stat-val" id="stat-closest">0.00142°</span>
+      </div>
+      <div class="stat-item" title="Total cosmic catastrophes, earthquakes, and bugs triggered">
+        <span class="stat-badge">DISASTERS TRIGGERED:</span>
+        <span class="stat-val highlight" id="stat-disasters">0</span>
+      </div>
+      <div class="stat-item" title="Time wasted pursuing absolute perfection">
+        <span class="stat-badge">TIME PURSUING PERFECTION:</span>
+        <span class="stat-val" id="stat-time">00:00</span>
+      </div>
+      <div class="stat-item shortcut-guide">
+        <span class="stat-badge">CONTROLS:</span>
+        <span class="shortcuts">[← / →] Fine Tilt • [Shift + Arrows] Ultra-Fine • [Space] Hold Breath • [A] Auto-Level • [S] Slap • [B] Beer • [M] Mute</span>
+      </div>
+    </aside>
+
+  </div> <!-- /stage-wrapper -->
+
+  <!-- Slap Impact Notification Overlay -->
+  <div id="slap-overlay" class="slap-overlay hidden" aria-hidden="true">
+    <div class="slap-hand hand-1">👋</div>
+    <div class="slap-hand hand-2">👋</div>
+    <div class="slap-quote">"YEP, THAT AIN'T GOIN' NOWHERE."</div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+
+<script>window.__BORED_AI_SLUG__="impossible-spirit-level";</script>
+<script src="report-widget.js"></script>
+</body>
+</html>
